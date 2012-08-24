@@ -1,9 +1,8 @@
 #lang racket
 
+(require file/md5)      ; For md5
 (require racket/bytes)  ; For bytes->string/utf8
 (require racket/port)   ; For copy-port
-(require file/md5)      ; For md5
-
 
 ;; Given an input port of DOT source, this function renders the source
 ;; into a .png file in cache-dir, and returns the pathname, or #f in
@@ -12,27 +11,21 @@
 ;; be no conversion.
 
 (define (graphviz-render in cache-dir)
-  (let ((source-buffer (open-output-string)))
-    (copy-port in source-buffer)
-    (let* ((basename (bytes->string/utf-8
-                      (md5 (get-output-string source-buffer))))
-           (pathname (build-path cache-dir basename)))
-      (cond ((file-exists? (path-add-suffix pathname ".png"))
-             (close-output-port source-buffer)
-             (path-add-suffix basename ".png"))
-            (else
-             ;; Because subprocess reads from a file port but not a
-             ;; string port, we have to write content in source buffer
-             ;; into a file.
-             (call-with-output-file (path-add-suffix pathname ".dot")
-               (lambda (dot-out-port)
-                 (write-string (get-output-string source-buffer) dot-out-port)
-                 (close-output-port dot-out-port)
-                 (close-output-port source-buffer)
-                 (if (invoke-graphviz-dot pathname)
-                     (path-add-suffix basename ".png")
-                     #f))
-               #:exists 'replace))))))
+  (let* ((source (call-with-output-string
+                  (lambda (out) (copy-port in out))))
+         (basename (bytes->string/utf-8 (md5 source)))
+         (pathname (build-path cache-dir basename)))
+    (fprintf (current-error-port) "Recieved:\n~a\n" source) ;debug
+    (cond ((file-exists? (path-add-suffix pathname ".png"))
+           (path-add-suffix basename ".png"))
+          (else
+           (call-with-output-file (path-add-suffix pathname ".dot")
+             (lambda (dot-out-port) (write-string source dot-out-port))
+             #:exists 'replace)
+           (if (invoke-graphviz-dot pathname)
+               (path-add-suffix basename ".png")
+               #f)))))
+
 
 
 ;; Create a subproess to invoke the Graphviz DOT command.  This
@@ -57,7 +50,7 @@
                    #t)
                   (else
                    ;; Deletes the possibly incomplete file.
-                   (display "Failed invoking dot. Remove out file."
+                   (display "Failed invoking dot and remove out file.\n"
                             (current-error-port))
                    (delete-file (path-add-suffix pathname ".png"))
                    #f))))

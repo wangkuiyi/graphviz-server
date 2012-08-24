@@ -1,17 +1,5 @@
 #lang racket
 
-(define test-http-request
-  "GET /work/6c30feb6a7662f58dc52f48eaead6b6d.png HTTP/1.1\r\n\
-Host: graphviz.server\r\n\
-Connection: keep-alive\r\n\
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11\r\n\
-Accept: */*\r\n\
-Referer: http://graphviz.server/graphviz-demo.html\r\n\
-Accept-Encoding: gzip,deflate,sdch\r\n\
-Accept-Language: en-US,en;q=0.8\r\n\
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3\r\n\
-\r\n")
-
 (struct http-request (method uri headers)
         #:transparent)
 

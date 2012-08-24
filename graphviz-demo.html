@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <!-- Note: <script>...</script> cannot be shortened by <script/> -->
+    <script type="text/javascript" src="./graphviz-client.js"></script>
+  </head>
+
+  <!-- When the body is loaded, read table definition from a <pre> tag
+       and post the definition to the matrix drawing server on reverse
+       proxy path '/matrix/'.  The returned HTML content is placed at
+       HTML tag with element id 'table'.  -->
+  <body onload="mcDrawGraphviz('graphviz_source', '/graphviz/', 'dot_img')">
+    <h2>Graphviz Server Demo</h2>
+    <p>
+      I would like to have Graphviz Dot source files embedded in my
+      HTML pages, but renderred into PNG images when pages are loaded.
+    </p>
+    <pre id="graphviz_source">
+      digraph graphname {
+      a -> b -> c;
+      b -> d;
+      }
+    </pre>
+    <div id="dot_img"></div>
+  </body>
+</html>

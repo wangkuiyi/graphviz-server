@@ -3,6 +3,8 @@
 (require xml)
 (require net/url)
 (require "./graphviz-rendering.rkt")
+(require "./parse-http-request.rkt")
+
 
 (define usage
   '(html
@@ -36,36 +38,37 @@ Otherwise, it displays this information."))))
             (custodian-shutdown-all cust))))
 
 (define (handle in out)
-  (let* ((head-fields (regexp-match #rx"([A-Z]+) ([^ ]+)" in))
-         (method (second head-fields))
-         (url (third head-fields)))
-    (regexp-match #rx"(\r\n|^)\r\n" in)
-    (cond ((bytes=? method #"POST") (handle-post-request in out))
-          (else (return-usage in out)))))
+  (let ((req (parse-http-request in)))
+    (cond ((bytes=? (http-request-method req) #"POST")
+           (handle-post-request req in out))
+          (else
+           (return-usage)))))
 
 (define (respond/ok out)
   (display "HTTP/1.1 200 Okay\r\n" out)
-  (display "Server: k\r\nContent-Type: text/html\r\n\r\n" out))
+  (display "Server: graphviz\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n" out))
 
 (define (respond/bad-request out)
   (display "HTTP/1.1 400 Bad Request\r\n" out)
-  (display "Server: k\r\nContent-Type: text/html\r\n\r\n" out))
+  (display "Server: graphviz\r\nContent-Type: text/plain\r\n\r\n" out))
 
 (define (return-usage in out)
   (respond/ok out)
   (display (xexpr->string usage) out))
 
-(define (allowed? expr);; Filter out illegal requests here
-  #t)
-
-(define (handle-post-request in out)
-  (let ((png-file (graphviz-render in (cache-dir))))
-    (cond ((false? png-file)
-           (respond/bad-request out))
-          (else
+(define (handle-post-request req in out)
+  (let* ((amt (second (assoc #"Content-Length"
+                            (http-request-headers req))))
+         (png-file
+          (graphviz-render in
+                           (string->number (bytes->string/utf-8 amt))
+                           (cache-dir))))
+    (cond ((path? png-file)
            (respond/ok out)
-           (fprintf out "<img src=\"~a\"/>"
-                    (build-path (url-prefix) png-file))))))
+           (fprintf out "<img src=~a></img>\n"
+                    (build-path (url-prefix) png-file)))
+          (else
+           (respond/bad-request out)))))
         
 
 (define url-prefix (make-parameter ""))
@@ -79,7 +82,6 @@ Otherwise, it displays this information."))))
    [("-d" "--cache-dir") dir
     "The directory on local filesystem for png files." (cache-dir dir)]
    [("-p" "--port") port
-    "The port on which the server listens." (listen-port port)])
+    "The port on which the server listens." (listen-port (string->number port))])
 
 (serve (listen-port))
-

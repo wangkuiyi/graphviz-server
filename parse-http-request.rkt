@@ -11,29 +11,22 @@
         #f
         (list (second matched) (third matched)))))
 
-;; Parse headers as an alist.
-(define (parse-headers in header-list)
-  (let ((header (regexp-match #rx"((([^:]+): ([^\r]+))|^)\r\n" in)))
-    ;; In usual cases, header contains no #f, thus member returns #f.
-    (if (false? (member #f header))
-        (parse-headers in
-                       (cons (cons (fourth header) (fifth header))
-                             header-list))
-        header-list)))
+(define (parse-header in)
+  (if (char=? (peek-char in) #\return)
+      #f
+      (let ((header (regexp-match #rx"((([^:]+): ([^\r]+))|^)\r\n" in)))
+        (list (fourth header) (fifth header)))))
+
+(define (parse-headers in hds)
+  (let ((hd (parse-header in)))
+    (cond ((false? hd) hds)
+          (else (parse-headers in (cons hd hds))))))
 
 ;; Parse the HTTP request as composed by a request line and a head list.
 (define (parse-http-request in)
-  (let* ((request-line (parse-request-line in)))
-    (cond ((false? request-line)
-           #f)
-          (else
-           (let ((header-list (parse-headers in '())))
-             (cond ((empty? header-list)
-                    #f)
-                   (else
-                    (http-request (first request-line)
-                                  (second request-line)
-                                  header-list))))))))
+  (let* ((req (parse-request-line in))
+         (hds (parse-headers in '())))
+    (http-request (first req) (second req) hds)))
 
 (provide (struct-out http-request)
          parse-http-request)

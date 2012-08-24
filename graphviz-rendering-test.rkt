@@ -5,6 +5,12 @@
 
 (define png-file "/tmp/ab0ee981691a12a1e947e330c18aae62.png")
 
+(define dot-source
+  "digraph graphname {\n\
+     a -> b -> c;\n\
+     b -> d;\n\
+   }\n")
+
 (when (file-exists? png-file)
   (delete-file png-file))
 
@@ -14,11 +20,8 @@
 (check-equal?
  (path->string
   (graphviz-render
-   (open-input-string
-    "digraph graphname {\n\
-     a -> b -> c;\n\
-     b -> d;\n\
-   }\n")
+   (open-input-string dot-source)
+   (string-length dot-source)
    "/tmp"))
   "ab0ee981691a12a1e947e330c18aae62.png")
 

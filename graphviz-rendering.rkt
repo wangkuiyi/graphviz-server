@@ -10,9 +10,8 @@
 ;; of the source.  So, if the .png file is already there, there would
 ;; be no conversion.
 
-(define (graphviz-render in cache-dir)
-  (let* ((source (call-with-output-string
-                  (lambda (out) (copy-port in out))))
+(define (graphviz-render in source-length cache-dir)
+  (let* ((source (read-string source-length in))
          (basename (bytes->string/utf-8 (md5 source)))
          (pathname (build-path cache-dir basename)))
     (fprintf (current-error-port) "Recieved:\n~a\n" source) ;debug

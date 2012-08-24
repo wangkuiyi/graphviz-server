@@ -14,7 +14,6 @@
   (let* ((source (read-string source-length in))
          (basename (bytes->string/utf-8 (md5 source)))
          (pathname (build-path cache-dir basename)))
-    (fprintf (current-error-port) "Recieved:\n~a\n" source) ;debug
     (cond ((file-exists? (path-add-suffix pathname ".png"))
            (path-add-suffix basename ".png"))
           (else

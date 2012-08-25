@@ -1,6 +1,10 @@
-# Embedding Graphviz Graphics in HTML Pages #
+# Embedding Graphviz in HTML Pages #
 
-Recently, the team I am working with is focused on documenting a
+** Yi Wang (yi.wang.2005@gmail.com) **
+
+## Motivations ##
+
+Recently, the team I am working with is focusing on documenting a
 complex online advertising system we developed.  As you know, in
 design docs, we would have figures like system architect, data flow
 and etc.  As programmers, we don’t want to draw if we can code.  So
@@ -13,6 +17,9 @@ environment, an Ajax client and a Racket server that invokes Graphviz
 for graphics rendering.  The source code is on
 [Github](https://github.com/wangkuiyi/graphviz-server).
 
+An illustration of the HTML source and its rendering result is as
+follows:
+![embedded-graphviz.png](doc/embedded-graphviz.png)
 
 ## Editing ##
 

@@ -42,17 +42,17 @@ Otherwise, it displays this information."))))
     (cond ((bytes=? (http-request-method req) #"POST")
            (handle-post-request req in out))
           (else
-           (return-usage)))))
+           (return-usage out)))))
 
 (define (respond/ok out)
   (display "HTTP/1.1 200 Okay\r\n" out)
-  (display "Server: graphviz\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n" out))
+  (display "Server: graphviz\r\nContent-Type: text/html; charset=utf-8\r\n\r\n" out))
 
 (define (respond/bad-request out)
   (display "HTTP/1.1 400 Bad Request\r\n" out)
-  (display "Server: graphviz\r\nContent-Type: text/plain\r\n\r\n" out))
+  (display "Server: graphviz\r\nContent-Type: text/html\r\n\r\n" out))
 
-(define (return-usage in out)
+(define (return-usage out)
   (respond/ok out)
   (display (xexpr->string usage) out))
 
@@ -61,6 +61,7 @@ Otherwise, it displays this information."))))
                             (http-request-headers req))))
          (png-file
           (graphviz-render in
+                           ;; TODO(wyi): amt or amt+2?
                            (string->number (bytes->string/utf-8 amt))
                            (cache-dir))))
     (cond ((path? png-file)

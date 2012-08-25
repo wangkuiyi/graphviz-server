@@ -50,7 +50,7 @@ put put them into your ~/.emacs.d directory.
 The following two screenshots show the difference when you put your
 point on the Graphviz source code and on the HTML source code:
 
-![multi-web-mode screenshot](doc/multi-web-mode.png)
+![multi-web-mode screenshot](https://raw.github.com/wangkuiyi/graphviz-server/master/doc/multi-web-mode.png)
  
 
 ## Rendering ##

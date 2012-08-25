@@ -1,7 +1,6 @@
 function mcDrawGraphviz(graphviz_source_element, 
 			graphviz_server_path, 
 			image_tag_element) {
-
     var renderer;
     if (window.XMLHttpRequest) {
         renderer = new XMLHttpRequest();
@@ -14,8 +13,8 @@ function mcDrawGraphviz(graphviz_source_element,
 	    if (renderer.status == 200) {
 		document.getElementById(image_tag_element).innerHTML =
                     renderer.responseText;
-		document.getElementById(graphviz_source_element).innerText = 
-		    renderer.responseText;
+		var source = document.getElementById(graphviz_source_element)
+		source.parentNode.removeChild(source);
             }
 	}
     }

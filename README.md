@@ -19,7 +19,7 @@ for graphics rendering.  The source code is on
 
 An illustration of the HTML source and its rendering result is as
 follows:
-![embedded-graphviz.png](doc/embedded-graphviz.png)
+![embedded-graphviz.png](https://raw.github.com/wangkuiyi/graphviz-server/master/doc/embedded-graphviz.png)
 
 ## Editing ##
 

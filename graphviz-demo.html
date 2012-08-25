@@ -6,10 +6,10 @@
     <script type="text/javascript" src="./graphviz-client.js"></script>
   </head>
 
-  <!-- When the body is loaded, read table definition from a <pre> tag
-       and post the definition to the matrix drawing server on reverse
-       proxy path '/matrix/'.  The returned HTML content is placed at
-       HTML tag with element id 'table'.  -->
+  <!-- When the body is loaded, read Graphviz source code from a <pre>
+       tag and post it to graphviz-server server on reverse proxy path
+       '/graphviz/'.  The returned HTML <img> tag will be inserted
+       into the HTML page.  -->
   <body onload="mcDrawGraphviz('graphviz_source', '/graphviz/', 'dot_img')">
     <h2>Graphviz Server Demo</h2>
     <p>

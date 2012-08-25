@@ -19,8 +19,11 @@
 
 (define (parse-headers in hds)
   (let ((hd (parse-header in)))
-    (cond ((false? hd) hds)
-          (else (parse-headers in (cons hd hds))))))
+    (cond ((false? hd)
+           (read-string 2 in)  ; Read the ending "\r\n".
+           hds)
+          (else
+           (parse-headers in (cons hd hds))))))
 
 ;; Parse the HTTP request as composed by a request line and a head list.
 (define (parse-http-request in)

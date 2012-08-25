@@ -61,7 +61,6 @@ Otherwise, it displays this information."))))
                             (http-request-headers req))))
          (png-file
           (graphviz-render in
-                           ;; TODO(wyi): amt or amt+2?
                            (string->number (bytes->string/utf-8 amt))
                            (cache-dir))))
     (cond ((path? png-file)
